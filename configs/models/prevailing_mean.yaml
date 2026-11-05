@@ -1,0 +1,6 @@
+name: prevailing_mean
+role: baseline
+feature_set: core  # Ignored by the model, which only uses the training labels.
+preprocess: none
+grid:
+  window: [252, 1260]

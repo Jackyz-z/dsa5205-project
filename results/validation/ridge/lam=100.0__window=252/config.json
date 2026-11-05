@@ -1,0 +1,10 @@
+{
+  "family": "ridge",
+  "feature_set": "core",
+  "params": {
+    "lam": 100.0,
+    "window": 252
+  },
+  "preprocess": "standard",
+  "seed": 42
+}

@@ -1,0 +1,9 @@
+{
+  "family": "ar1",
+  "feature_set": "ar",
+  "params": {
+    "window": 252
+  },
+  "preprocess": "none",
+  "seed": 42
+}

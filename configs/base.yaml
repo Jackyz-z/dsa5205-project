@@ -1,0 +1,51 @@
+# Shared settings. Everything here is fixed before validation and applies to every model.
+seed: 42
+
+data:
+  start: "1993-01-01"
+  end: "2026-10-31"  # Exclusive in yfinance: the last row is 2026-10-30.
+  tickers:
+    spy: "SPY"
+    vix: "^VIX"
+    long_rate: "^TNX"
+    short_rate: "^IRX"
+  split_check_ticker: "AAPL"  # SPY has no split events to verify (Appendix B.4).
+  split_check_date: "2020-08-31"
+  max_ffill_days: 5
+
+splits:
+  prediction_start: "1999-01-01"  # Forecasts start here; 1999 is position warm-up only.
+  validation_start: "2000-03-01"  # First date on which all grid models have positions.
+  validation_end: "2010-12-31"
+  test_start: "2011-01-01"
+  test_end: "2026-10-30"
+
+rolling:
+  refit_every: 21
+
+strategy:
+  neutral_weight: 1.0
+  z_scale: 0.5
+  min_weight: 0.0
+  max_weight: 1.5
+  z_lookback: 252
+  no_trade_band: 0.10
+
+costs:
+  base_bps: 5.0
+  sensitivity_bps: [0.0, 1.0, 2.0, 5.0, 10.0]
+
+evaluation:
+  periods_per_year: 252
+  newey_west_lags: 5
+  subperiods:
+    validation:
+      - ["2000-03-01", "2002-12-31"]
+      - ["2003-01-01", "2007-06-30"]
+      - ["2007-07-01", "2009-06-30"]
+      - ["2009-07-01", "2010-12-31"]
+    test:
+      - ["2011-01-01", "2014-12-31"]
+      - ["2015-01-01", "2019-12-31"]
+      - ["2020-01-01", "2022-12-31"]
+      - ["2023-01-01", "2026-10-30"]

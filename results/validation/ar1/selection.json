@@ -1,0 +1,11 @@
+{
+  "config_id": "window=252",
+  "family": "ar1",
+  "feature_set": "ar",
+  "params": {
+    "window": 252
+  },
+  "preprocess": "none",
+  "role": "baseline",
+  "validation_sharpe": 0.028601733854441515
+}

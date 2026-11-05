@@ -1,0 +1,11 @@
+{
+  "config_id": "window=1260",
+  "family": "prevailing_mean",
+  "feature_set": "core",
+  "params": {
+    "window": 1260
+  },
+  "preprocess": "none",
+  "role": "baseline",
+  "validation_sharpe": 0.40413746690476116
+}

@@ -1,0 +1,6 @@
+name: ar1
+role: baseline
+feature_set: ar
+preprocess: none
+grid:
+  window: [252, 1260]

@@ -1,0 +1,12 @@
+{
+  "config_id": "lam=100.0__window=1260",
+  "family": "ridge",
+  "feature_set": "core",
+  "params": {
+    "lam": 100.0,
+    "window": 1260
+  },
+  "preprocess": "standard",
+  "role": "candidate",
+  "validation_sharpe": 0.3835068503083448
+}

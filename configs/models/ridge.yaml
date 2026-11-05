@@ -1,0 +1,7 @@
+name: ridge
+role: candidate
+feature_set: core
+preprocess: standard
+grid:
+  window: [252, 1260]
+  lam: [0.01, 0.1, 1.0, 10.0, 100.0]

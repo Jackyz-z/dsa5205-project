@@ -1,0 +1,9 @@
+{
+  "family": "prevailing_mean",
+  "feature_set": "core",
+  "params": {
+    "window": 252
+  },
+  "preprocess": "none",
+  "seed": 42
+}
