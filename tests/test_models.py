@@ -9,6 +9,7 @@ from timing.config import PROJECT_ROOT, Paths, list_model_names, load_model_spec
 from timing.data.features import CORE_FEATURES, FEATURE_SETS
 from timing.engine.preprocess import Preprocessor
 from timing.engine.rolling import run_rolling
+from timing.models.lasso import LassoModel
 from timing.models.registry import build_model, register, registered_names
 from timing.models.ridge import RidgeModel
 
@@ -88,6 +89,15 @@ def test_large_ridge_penalty_shrinks_to_the_prevailing_mean(table):
     processor = Preprocessor("standard").fit(X)
     forecasts = RidgeModel(lam=1e8).fit(processor.transform(X), y).predict(processor.transform(X))
     assert forecasts == pytest.approx(np.full(200, y.mean()), abs=1e-8)
+
+
+def test_large_lasso_penalty_shrinks_to_the_prevailing_mean(table):
+    X, y = table[CORE_FEATURES].iloc[:200], table["y"].iloc[:200]
+    processor = Preprocessor("standard").fit(X)
+    model = LassoModel(alpha=1e8).fit(processor.transform(X), y)
+    forecasts = model.predict(processor.transform(X))
+    assert forecasts == pytest.approx(np.full(200, y.mean()), abs=1e-8)
+    assert model.diagnostics()["n_nonzero"] == 0
 
 
 def test_duplicate_registration_is_rejected():
