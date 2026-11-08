@@ -1,0 +1,12 @@
+{
+  "config_id": "alpha=0.001__window=1260",
+  "family": "lasso",
+  "feature_set": "core",
+  "params": {
+    "alpha": 0.001,
+    "window": 1260
+  },
+  "preprocess": "standard",
+  "role": "candidate",
+  "validation_sharpe": 0.21500842858192412
+}

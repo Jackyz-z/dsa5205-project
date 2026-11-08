@@ -1,0 +1,10 @@
+{
+  "family": "lasso",
+  "feature_set": "core",
+  "params": {
+    "alpha": 0.001,
+    "window": 252
+  },
+  "preprocess": "standard",
+  "seed": 42
+}
