@@ -5,7 +5,7 @@ data known at today's close. A fixed rule turns the forecast into a SPY weight b
 150%, with the rest in cash. This is a historical research exercise, not a live trading system.
 
 The data, model, strategy, and evaluation layers are independent, so new models can be added
-without changing the pipeline. 
+without changing the pipeline. The candidate models currently included are ridge and LASSO.
 
 ## Setup
 
@@ -53,7 +53,9 @@ real test set has not been run.
 
 With the fixed data end date, the dataset has 8,243 rows with decision dates from 1994-01-27 to
 2026-10-28. Validation selects `ridge lam=100.0__window=1260`, with a validation net Sharpe of
-0.384.
+0.384. LASSO was added after the test lock; its best validation configuration is
+`alpha=0.001__window=1260`, with a validation net Sharpe of 0.215. Its test-period output is
+therefore kept under `results/test_exploratory/` and does not change the frozen selection.
 
 Yahoo's adjusted SPY prices can differ between requests. Two downloads made on 2026-11-05 differed
 by up to about 1.5e-6 in relative terms, which changed `data_hash` in `manifest.json` and moved
@@ -103,7 +105,7 @@ No other file changes. The contract tests pick up the new model automatically.
 ```text
 configs/             Shared settings and one YAML file per model family
 timing/data/         Download, QA, features, and the dataset contract
-timing/models/       BaseModel, the registry, ridge, and baselines
+timing/models/       BaseModel, the registry, ridge, LASSO, and baselines
 timing/engine/       Time splits, preprocessing, and the rolling walk-forward
 timing/strategy/     Forecast-to-weight rule and the backtest
 timing/evaluation/   Metrics, figures, and tables
