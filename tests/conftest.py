@@ -76,8 +76,7 @@ def sandbox(tmp_path):
     }
     with open(paths.configs / "base.yaml", "w", encoding="utf-8") as f:
         yaml.safe_dump(cfg, f)
-    for name in ("ridge", "prevailing_mean", "ar1"):
-        model_path = paths.configs / "models" / f"{name}.yaml"
+    for model_path in (paths.configs / "models").glob("*.yaml"):
         with open(model_path, encoding="utf-8") as f:
             spec = yaml.safe_load(f)
         spec["grid"]["window"] = [60, 252]
