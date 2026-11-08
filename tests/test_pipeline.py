@@ -36,7 +36,8 @@ def test_every_validation_run_is_logged(sandbox):
     validate(cfg, paths, dataset, "all")
     log = pd.read_csv(paths.experiment_log)
     assert len(log[log["family"] == "ridge"]) == 10
-    assert set(log["family"]) == {"ridge", "prevailing_mean", "ar1"}
+    assert len(log[log["family"] == "lasso"]) == 8
+    assert set(log["family"]) == {"lasso", "ridge", "prevailing_mean", "ar1"}
 
 
 def test_baselines_cannot_be_the_final_model(sandbox):
@@ -119,7 +120,7 @@ def test_exploratory_requires_a_lock(sandbox):
 
 def test_reports_write_all_tables_and_figures(sandbox):
     paths, cfg, dataset = sandbox
-    validate(cfg, paths, dataset, "all")
+    selection = validate(cfg, paths, dataset, "all")
     assert build_reports(cfg, paths, dataset) == ["validation"]
     run_test(cfg, paths, dataset, confirm_final=True)
     assert build_reports(cfg, paths, dataset) == ["validation", "test"]
@@ -132,5 +133,5 @@ def test_reports_write_all_tables_and_figures(sandbox):
     assert (paths.results / "figures" / "validation" / "grid_ridge.png").exists()
 
     summary = pd.read_csv(paths.results / "tables" / "test" / "summary.csv")
-    assert summary["label"].tolist()[0] == "ridge (final)"
+    assert summary["label"].tolist()[0] == f"{selection['final']['family']} (final)"
     assert "SPY buy & hold" in set(summary["label"])
