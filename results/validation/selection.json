@@ -9,7 +9,19 @@
       },
       "preprocess": "none",
       "role": "baseline",
-      "validation_sharpe": 0.028601733854441515
+      "validation_sharpe": 0.028611040417675947
+    },
+    "lasso": {
+      "config_id": "alpha=0.001__window=1260",
+      "family": "lasso",
+      "feature_set": "core",
+      "params": {
+        "alpha": 0.001,
+        "window": 1260
+      },
+      "preprocess": "standard",
+      "role": "candidate",
+      "validation_sharpe": 0.21500842858192412
     },
     "prevailing_mean": {
       "config_id": "window=1260",
@@ -20,7 +32,7 @@
       },
       "preprocess": "none",
       "role": "baseline",
-      "validation_sharpe": 0.40413746690476116
+      "validation_sharpe": 0.4041391898394183
     },
     "ridge": {
       "config_id": "lam=100.0__window=1260",
