@@ -1,0 +1,12 @@
+name: random_forest
+role: candidate
+feature_set: core
+preprocess: none
+# Predeclared before viewing any Random Forest validation performance: 8 settings.
+# Shared windows match Ridge. All position, execution and cost rules stay in base.yaml.
+grid:
+  window: [252, 1260]
+  max_depth: [3, 5]
+  min_samples_leaf: [20, 50]
+  n_estimators: [200]
+  max_features: [1.0]
