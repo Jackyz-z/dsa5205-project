@@ -1,0 +1,15 @@
+{
+  "config_id": "max_depth=3__max_features=1.0__min_samples_leaf=20__n_estimators=200__window=1260",
+  "family": "random_forest",
+  "feature_set": "core",
+  "params": {
+    "max_depth": 3,
+    "max_features": 1.0,
+    "min_samples_leaf": 20,
+    "n_estimators": 200,
+    "window": 1260
+  },
+  "preprocess": "none",
+  "role": "candidate",
+  "validation_sharpe": 0.10244617734403051
+}
