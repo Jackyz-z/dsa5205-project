@@ -1,0 +1,13 @@
+name: xgboost
+role: candidate
+feature_set: core
+preprocess: none
+# Predeclared before viewing XGBoost performance: 8 settings, like Random Forest.
+# Shared windows, features, execution, costs and selection rule are unchanged.
+grid:
+  window: [252, 1260]
+  max_depth: [2, 3]
+  learning_rate: [0.03, 0.1]
+  n_estimators: [200]
+  min_child_weight: [20.0]
+  reg_lambda: [1.0]

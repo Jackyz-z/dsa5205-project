@@ -5,7 +5,7 @@ import pytest
 import yaml
 
 import timing.models  # noqa: F401
-from timing.config import read_json
+from timing.config import list_model_names, load_model_spec, read_json
 from timing.evaluation.report import build_reports
 from timing.pipeline import GateError, run_exploratory, run_test, validate
 
@@ -19,15 +19,16 @@ def test_validation_tries_the_whole_grid_and_applies_the_rule(sandbox):
     assert selection["final"]["validation_sharpe"] == pytest.approx(grid["sharpe"].max(), abs=1e-5)
 
 
-def test_validation_never_reads_test_rows(sandbox):
+@pytest.mark.parametrize("model", ["ridge", "xgboost"])
+def test_validation_never_reads_test_rows(sandbox, model):
     paths, cfg, dataset = sandbox
-    validate(cfg, paths, dataset, "ridge")
-    first = pd.read_csv(paths.results / "validation" / "ridge" / "grid_metrics.csv")
+    validate(cfg, paths, dataset, model)
+    first = pd.read_csv(paths.results / "validation" / model / "grid_metrics.csv")
 
     tampered = dataset.copy()
     tampered.loc[tampered["label_end"] > pd.Timestamp(cfg["splits"]["validation_end"]), ["y", "spy_ret"]] = 99.0
-    validate(cfg, paths, tampered, "ridge")
-    second = pd.read_csv(paths.results / "validation" / "ridge" / "grid_metrics.csv")
+    validate(cfg, paths, tampered, model)
+    second = pd.read_csv(paths.results / "validation" / model / "grid_metrics.csv")
     pd.testing.assert_frame_equal(first, second)
 
 
@@ -37,7 +38,9 @@ def test_every_validation_run_is_logged(sandbox):
     log = pd.read_csv(paths.experiment_log)
     assert len(log[log["family"] == "ridge"]) == 10
     assert len(log[log["family"] == "lasso"]) == 8
-    assert set(log["family"]) == {"lasso", "ridge", "prevailing_mean", "ar1"}
+    assert set(log["family"]) == set(list_model_names(paths))
+    for name in list_model_names(paths):
+        assert len(log[log["family"] == name]) == len(load_model_spec(paths, name).configs())
 
 
 def test_baselines_cannot_be_the_final_model(sandbox):

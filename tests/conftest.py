@@ -80,6 +80,9 @@ def sandbox(tmp_path):
         with open(model_path, encoding="utf-8") as f:
             spec = yaml.safe_load(f)
         spec["grid"]["window"] = [60, 252]
+        # Integration tests exercise orchestration, not production tree counts.
+        if "n_estimators" in spec["grid"]:
+            spec["grid"]["n_estimators"] = [5]
         with open(model_path, "w", encoding="utf-8") as f:
             yaml.safe_dump(spec, f)
 
