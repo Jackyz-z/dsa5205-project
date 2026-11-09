@@ -6,3 +6,4 @@ PyYAML==6.0.3
 scikit-learn==1.9.1
 statsmodels==0.15.0
 yfinance==1.8.0
+xgboost==3.1.2

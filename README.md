@@ -5,7 +5,10 @@ data known at today's close. A fixed rule turns the forecast into a SPY weight b
 150%, with the rest in cash. This is a historical research exercise, not a live trading system.
 
 The data, model, strategy, and evaluation layers are independent, so new models can be added
-without changing the pipeline. The candidate models currently included are ridge and LASSO.
+without changing the pipeline. The candidate models are Ridge, LASSO, Random Forest and XGBoost.
+
+For XGBoost's design, leakage checks, run commands and feature-branch submission steps,
+see [the XGBoost guide](docs/xgboost.md).
 
 ## Setup
 
@@ -105,7 +108,7 @@ No other file changes. The contract tests pick up the new model automatically.
 ```text
 configs/             Shared settings and one YAML file per model family
 timing/data/         Download, QA, features, and the dataset contract
-timing/models/       BaseModel, the registry, ridge, LASSO, and baselines
+timing/models/       BaseModel, registry, Ridge, LASSO, Random Forest, XGBoost, baselines
 timing/engine/       Time splits, preprocessing, and the rolling walk-forward
 timing/strategy/     Forecast-to-weight rule and the backtest
 timing/evaluation/   Metrics, figures, and tables
