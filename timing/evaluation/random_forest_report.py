@@ -5,7 +5,7 @@ import hashlib
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from timing.config import PROJECT_ROOT, Paths, load_base_config, read_json, write_json
+from timing.config import PROJECT_ROOT, Paths, config_id, load_base_config, read_json, write_json
 from timing.data.dataset import load_dataset
 from timing.engine.splits import development_rows
 from timing.evaluation.report import Entry, build_split_report
@@ -50,7 +50,6 @@ def main():
     plots._save(fig, figure_dir / 'grid_random_forest.png')
     inputs = [source / 'selection.json', source / 'grid_metrics.csv', paths.dataset, paths.configs / 'base.yaml']
     for e in entries:
-        from timing.config import config_id
         inputs.append(paths.results / 'validation' / e.family / config_id(e.params) / 'predictions.csv')
     write_json(table_dir / 'figure_manifest.json', {
         'split': 'validation', 'selected_params': record['params'],
@@ -60,6 +59,10 @@ def main():
     print('Saved six validation figures:', figure_dir)
     print('Saved tables and provenance:', table_dir)
     print(tables['summary'][['label', 'ann_return', 'sharpe', 'max_drawdown']].to_string(index=False))
+
+
+if __name__ == '__main__':
+    main()
 
 
 if __name__ == '__main__':

@@ -7,5 +7,5 @@
   },
   "preprocess": "none",
   "role": "baseline",
-  "validation_sharpe": 0.028601733854441515
+  "validation_sharpe": 0.02860485142210148
 }

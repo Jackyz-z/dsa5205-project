@@ -39,73 +39,16 @@ Ridge 原配置为 10 组；这是共享评价协议，而非完全相等的搜�
 
 ## 运行
 
-在仓库根目录使用 Python 3.11 或更新版本：
+环境和完整命令见根目录 `README.md`。只调试 XGBoost 时：
 
 ```bash
-python3.12 -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements.txt
-python -m pytest -q
-```
-
-如 macOS 报缺少 `libomp.dylib`，安装 OpenMP runtime（有 Homebrew 时：
-`brew install libomp`）。若 `python3.12` 不存在，先安装 Python 3.12 或用 uv 建环境。
-
-本机已建好 `.venv`（Python 3.12.16）并安装依赖；无需重新建环境。
-本机测试使用 scikit-learn 附带的 OpenMP 库，在 VS Code 的终端执行：
-
-```bash
-source .venv/bin/activate
-export DYLD_LIBRARY_PATH="$VIRTUAL_ENV/lib/python3.12/site-packages/sklearn/.dylibs${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}"
-python -m pytest -q
-```
-
-2026-11-10：完整测试 **76 passed，18 warnings**。警告来自 LASSO 在未来数据极端
-扰动后的收敛检查及现有 Matplotlib 布局。真实市场数据未下载，真实验证回测未运行；
-原有 `results/` 和测试锁未更改。自动模型契约测试使用生产配置的 200 棵树；
-端到端合成数据测试将树数降到 5，以检查流程并控制运行时间，生产 YAML 不受影响。
-
-有团队共享的本地数据时直接使用；否则运行数据构建命令。
-
-```bash
-python -m timing.cli data
-python -m timing.cli validate --model all
+python -m timing.cli validate --model xgboost    # 也会运行基准模型
 python -m timing.cli report
 ```
 
-只调试 XGBoost 接入时可使用 `python -m timing.cli validate --model xgboost`。
-该命令也运行基准模型，但不会重新生成其他候选模型的验证结果。
+如 macOS 报缺少 `libomp.dylib`，安装 OpenMP runtime（有 Homebrew 时：`brew install libomp`）。
 
-仓库已经包含 `results/test/lock.json`，XGBoost 是锁定后新增模型。
-在验证选定参数后，如需测试期探索性比较，使用：
+测试期结果由 `python -m timing.cli test --confirm-final` 统一生成，全组冻结所有模型后再运行。
 
-```bash
-python -m timing.cli test --exploratory xgboost
-python -m timing.cli report
-```
-
-结果写入 `results/test_exploratory/xgboost/`。保留测试锁和原冻结结果，报告中注明
-探索性比较；不要把新增模型称为原 one-shot 测试选出的最终模型。
-本次开发的合成数据测试不构成真实市场收益结果。
-
-## 提交 feature/xgboost 和 PR
-
-在 GitHub Desktop 选择此仓库和 `feature/xgboost`。检查 Changes 中仅包含本次代码、
-配置、依赖、测试和文档；不要选中虚拟环境、市场数据或历史结果变动。
-填写提交标题 `Add XGBoost market timing model`，提交后 Push origin，再创建面向
-团队目标分支（通常为 main）的 PR。提交和推送由你执行。
-
-也可以用终端（先查看状态，确认分支）：
-
-```bash
-git status --short --branch
-git diff --check
-git add timing/models/xgboost.py configs/models/xgboost.yaml requirements.txt README.md docs/xgboost.md tests/test_xgboost.py tests/test_pipeline.py tests/conftest.py
-git commit -m "Add XGBoost market timing model"
-git push origin feature/xgboost
-```
-
-建议 PR 标题：`Add XGBoost market timing model with temporal leakage tests`。
-描述说明新增模型采用共享窗口、特征、策略和成本；8 组预设验证参数；没有 early
-stopping；新增未来扰动与重训检查；集成测试支持动态模型名单。
-填写 `76 passed (18 warnings)`，并注明尚未生成真实市场验证结果、测试期须走 exploratory。
+自动测试中，模型契约测试使用生产配置的 200 棵树；端到端合成数据测试将树数降到 5，
+以检查流程并控制运行时间，生产 YAML 不受影响。

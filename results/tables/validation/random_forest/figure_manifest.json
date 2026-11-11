@@ -1,0 +1,21 @@
+{
+  "data_hash": "1d468770cb192b20",
+  "inputs_sha256": {
+    "configs\\base.yaml": "fa1c9e94b9098cd1d0606e575e07f61901be4e59f5131944fe5a5583a8fd2386",
+    "data\\processed\\dataset.csv": "5bb76bf2b06087ba4be7c40ae5dde56a141025bd2598ea0cb2b4e1a47556477b",
+    "results\\validation\\ar1\\window=1260\\predictions.csv": "91fecf5b7cd877b648a74a86e4c509e1b5275e3e1b676c0f2d6355557347a42b",
+    "results\\validation\\prevailing_mean\\window=1260\\predictions.csv": "3816fbbda97ce3094082ad9a0ce33e91617283f9d11a2312ba3e87232bf91273",
+    "results\\validation\\random_forest\\grid_metrics.csv": "4fd92bfd1d02aaa08b72a06ef12fd547eb5c7e558359a3191d19779708f4850c",
+    "results\\validation\\random_forest\\max_depth=3__max_features=1.0__min_samples_leaf=20__n_estimators=200__window=1260\\predictions.csv": "586301d3861a50bdb829dad134c545934d6be53683a6b26807188528d582c72b",
+    "results\\validation\\random_forest\\selection.json": "3a58b2a68f889f1f1195d899a2b1e81e3ed6a453aae761b73902ea90fdd9b20b"
+  },
+  "note": "Uses shared accounting; validation-selected RF is not the group final model. No test data evaluated.",
+  "selected_params": {
+    "max_depth": 3,
+    "max_features": 1.0,
+    "min_samples_leaf": 20,
+    "n_estimators": 200,
+    "window": 1260
+  },
+  "split": "validation"
+}

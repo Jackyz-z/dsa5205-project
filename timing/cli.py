@@ -13,7 +13,7 @@ from timing.data.dataset import build_and_save, load_dataset
 from timing.data.download import download_all
 from timing.data.qa import run_qa
 from timing.evaluation.report import build_reports
-from timing.pipeline import GateError, run_exploratory, run_test, set_seed, validate
+from timing.pipeline import GateError, clean_results, run_test, set_seed, validate
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -26,11 +26,11 @@ def _parser() -> argparse.ArgumentParser:
     validate_cmd = commands.add_parser("validate", help="run a model grid on the validation period")
     validate_cmd.add_argument("--model", default="all", help="model name, or 'all' (default)")
 
-    test = commands.add_parser("test", help="run the one-shot test on the frozen selection")
+    test = commands.add_parser("test", help="run the validation-selected models on the test period")
     test.add_argument("--confirm-final", action="store_true", help="confirm that all models are frozen")
-    test.add_argument("--exploratory", metavar="MODEL", help="evaluate a model added after the lock, kept separate")
 
     commands.add_parser("report", help="build tables and figures from saved predictions")
+    commands.add_parser("clean", help="delete everything under results/")
     return parser
 
 
@@ -54,6 +54,11 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Wrote {paths.dataset.relative_to(paths.root)} and {paths.qa_report.relative_to(paths.root)}")
         return 0
 
+    if args.command == "clean":
+        removed = clean_results(paths)
+        print(f"Removed {removed} generated files under results/.")
+        return 0
+
     dataset = load_dataset(paths)
 
     if args.command == "validate":
@@ -64,10 +69,7 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "test":
         try:
-            if args.exploratory:
-                run_exploratory(cfg, paths, dataset, args.exploratory)
-            else:
-                run_test(cfg, paths, dataset, args.confirm_final)
+            run_test(cfg, paths, dataset, args.confirm_final)
         except GateError as exc:
             print(f"Refused: {exc}", file=sys.stderr)
             return 2

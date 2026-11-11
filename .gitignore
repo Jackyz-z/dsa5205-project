@@ -5,6 +5,7 @@ __pycache__/
 venv/
 .env
 .DS_Store
+.venv-win/
 
 # Market data is rebuilt by `python -m timing.cli data` and must not be redistributed.
 data/raw/

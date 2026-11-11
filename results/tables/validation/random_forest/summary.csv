@@ -1,0 +1,5 @@
+label,config,role,ann_return,ann_vol,sharpe,sharpe_se,max_drawdown,ann_turnover,avg_weight,days_traded_pct,n_days,alpha_annual,alpha_t,beta,oos_r2_vs_prevailing_mean,oos_r2_vs_zero,direction_accuracy
+Random Forest,max_depth=3__max_features=1.0__min_samples_leaf=20__n_estimators=200__window=1260,candidate,0.0202467,0.242006,0.103341,0.304104,-0.570295,35.4682,0.978473,0.40367,2725,0.0166714,0.584681,0.992057,-0.0230987,-0.0249187,0.50055
+Prevailing mean (1260d),window=1260,baseline,0.0757286,0.146823,0.404135,0.30415,-0.23809,2.50045,0.804221,0.0377982,2725,0.0557471,1.80719,0.431055,0,-0.00177888,0.490642
+AR(1) (1260d),window=1260,baseline,-0.0156616,0.235136,-0.0524488,0.304101,-0.577363,101.667,0.987185,0.760734,2725,-0.0202221,-0.617029,0.937385,-0.00294865,-0.00473277,0.513394
+SPY buy & hold,,benchmark,0.00878366,0.219385,0.0383328,0.304101,-0.554229,0,1,0,2725,,,,,,
