@@ -9,7 +9,7 @@
       },
       "preprocess": "none",
       "role": "baseline",
-      "validation_sharpe": 0.028611040417675947
+      "validation_sharpe": 0.02860485142210148
     },
     "lasso": {
       "config_id": "alpha=0.001__window=1260",
@@ -21,7 +21,7 @@
       },
       "preprocess": "standard",
       "role": "candidate",
-      "validation_sharpe": 0.21500842858192412
+      "validation_sharpe": 0.2150079125350675
     },
     "prevailing_mean": {
       "config_id": "window=1260",
@@ -32,7 +32,22 @@
       },
       "preprocess": "none",
       "role": "baseline",
-      "validation_sharpe": 0.4041391898394183
+      "validation_sharpe": 0.404135349329894
+    },
+    "random_forest": {
+      "config_id": "max_depth=3__max_features=1.0__min_samples_leaf=20__n_estimators=200__window=1260",
+      "family": "random_forest",
+      "feature_set": "core",
+      "params": {
+        "max_depth": 3,
+        "max_features": 1.0,
+        "min_samples_leaf": 20,
+        "n_estimators": 200,
+        "window": 1260
+      },
+      "preprocess": "none",
+      "role": "candidate",
+      "validation_sharpe": 0.10334100111692981
     },
     "ridge": {
       "config_id": "lam=100.0__window=1260",
@@ -44,7 +59,23 @@
       },
       "preprocess": "standard",
       "role": "candidate",
-      "validation_sharpe": 0.3835068503083448
+      "validation_sharpe": 0.38350408580191436
+    },
+    "xgboost": {
+      "config_id": "learning_rate=0.03__max_depth=2__min_child_weight=20.0__n_estimators=200__reg_lambda=1.0__window=1260",
+      "family": "xgboost",
+      "feature_set": "core",
+      "params": {
+        "learning_rate": 0.03,
+        "max_depth": 2,
+        "min_child_weight": 20.0,
+        "n_estimators": 200,
+        "reg_lambda": 1.0,
+        "window": 1260
+      },
+      "preprocess": "none",
+      "role": "candidate",
+      "validation_sharpe": 0.07264173918862192
     }
   },
   "final": {
@@ -57,7 +88,7 @@
     },
     "preprocess": "standard",
     "role": "candidate",
-    "validation_sharpe": 0.3835068503083448
+    "validation_sharpe": 0.38350408580191436
   },
   "rule": "Highest validation Sharpe net of base costs among candidate models"
 }

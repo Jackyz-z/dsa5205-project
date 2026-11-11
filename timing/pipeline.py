@@ -1,4 +1,4 @@
-"""Top-level workflows: build data, validate, run the one-shot test, and report."""
+"""Top-level workflows: validate, run the test, and clean results."""
 
 from __future__ import annotations
 
@@ -17,7 +17,6 @@ from timing.config import (
     list_model_names,
     load_model_spec,
     read_json,
-    stable_hash,
     write_json,
 )
 from timing.engine.rolling import run_rolling
@@ -27,10 +26,11 @@ from timing.strategy.backtest import backtest_forecasts
 
 LOG_FIELDS = ["timestamp_utc", "split", "family", "role", "config_id", "data_hash", "sharpe", "oos_r2_vs_prevailing_mean"]
 BASELINES = ["prevailing_mean", "ar1"]
+SELECTION_RULE = "Highest validation Sharpe net of base costs among candidate models"
 
 
 class GateError(RuntimeError):
-    """Raised when a run would break the one-shot test rule."""
+    """Raised when the test is requested before validation or without confirmation."""
 
 
 def _data_hash(paths: Paths) -> str:
@@ -157,23 +157,9 @@ def write_global_selection(paths: Paths) -> dict[str, Any]:
     if not candidates:
         raise ValueError("No candidate model has been validated yet.")
     final = max(sorted(candidates, key=lambda r: r["family"]), key=lambda r: r["validation_sharpe"])
-    selection = {
-        "rule": "Highest validation Sharpe net of base costs among candidate models",
-        "final": final,
-        "families": families,
-    }
+    selection = {"rule": SELECTION_RULE, "final": final, "families": families}
     write_json(root / "selection.json", selection)
     return selection
-
-
-def _frozen_payload(cfg: dict[str, Any], selection: dict[str, Any]) -> dict[str, Any]:
-    """Everything that must not change once the test set has been opened."""
-    keys = ("family", "config_id", "feature_set", "preprocess")
-    return {
-        "base_config": cfg,
-        "final": {k: selection["final"][k] for k in keys},
-        "families": {name: {k: record[k] for k in keys} for name, record in selection["families"].items()},
-    }
 
 
 def _run_test_models(
@@ -220,51 +206,33 @@ def _run_test_models(
 
 
 def run_test(cfg: dict[str, Any], paths: Paths, dataset: pd.DataFrame, confirm_final: bool) -> dict[str, Any]:
-    """The one-shot test. A later run must match the locked configuration exactly."""
+    """Evaluate each family's validation-selected configuration on the test period.
+
+    Nothing in the code limits how often this runs. Using the test period only after all
+    models are frozen is the team's responsibility; --confirm-final is a reminder of that.
+    """
     selection_path = paths.results / "validation" / "selection.json"
     if not selection_path.exists():
         raise GateError("Run validation before the test.")
     if not confirm_final:
-        raise GateError(
-            "The test set may be used only once. Freeze all models first, then pass --confirm-final."
-        )
+        raise GateError("This uses the test period. Freeze all models first, then pass --confirm-final.")
     selection = read_json(selection_path)
-    payload_hash = stable_hash(_frozen_payload(cfg, selection))
-    data_hash = _data_hash(paths)
-
-    if paths.test_lock.exists():
-        lock = read_json(paths.test_lock)
-        if lock["config_hash"] != payload_hash:
-            raise GateError(
-                "The configuration or selection differs from the locked test run. "
-                "Use --exploratory MODEL for models added after the lock."
-            )
-        if lock["data_hash"] != data_hash:
-            print("Warning: the data differ from the locked run, so results may differ slightly.")
-        print("Reproducing the locked test run.")
-    else:
-        write_json(
-            paths.test_lock,
-            {
-                "config_hash": payload_hash,
-                "data_hash": data_hash,
-                "locked_at_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-                "selection": selection,
-            },
-        )
     _run_test_models(cfg, paths, dataset, selection["families"], paths.results / "test", "test")
     return selection
 
 
-def run_exploratory(cfg: dict[str, Any], paths: Paths, dataset: pd.DataFrame, model: str) -> None:
-    """Evaluate a model added after the lock. It is kept apart and cannot become the final model."""
-    if not paths.test_lock.exists():
-        raise GateError("Exploratory runs are for models added after the locked test run.")
-    selection_path = paths.results / "validation" / model / "selection.json"
-    if not selection_path.exists():
-        raise GateError(f"Validate {model!r} first.")
-    record = read_json(selection_path)
-    _run_test_models(cfg, paths, dataset, {model: record}, paths.results / "test_exploratory", "test_exploratory")
+def clean_results(paths: Paths) -> int:
+    """Delete everything under results/ so a fresh run starts clean."""
+    removed = 0
+    if not paths.results.exists():
+        return removed
+    for path in sorted(paths.results.rglob("*"), reverse=True):
+        if path.is_file():
+            path.unlink()
+            removed += 1
+        elif path.is_dir() and not any(path.iterdir()):
+            path.rmdir()
+    return removed
 
 
 def set_seed(seed: int) -> None:

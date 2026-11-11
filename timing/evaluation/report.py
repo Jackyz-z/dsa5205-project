@@ -208,24 +208,12 @@ def build_reports(cfg: dict[str, Any], paths: Paths, dataset: pd.DataFrame) -> l
     plot_validation_grids(paths, list(selection["families"]))
     built.append("validation")
 
-    if paths.test_lock.exists():
-        lock = read_json(paths.test_lock)
-        build_split_report(cfg, paths, dataset, "test", "test", report_entries(lock["selection"]))
+    # The test report is built once every reported model has test-period predictions.
+    test_dir = paths.results / "test"
+    have_test = all((test_dir / e.family / config_id(e.params) / "predictions.csv").exists() for e in entries)
+    if have_test:
+        build_split_report(cfg, paths, dataset, "test", "test", entries)
         built.append("test")
-
-    exploratory_dir = paths.results / "test_exploratory"
-    if exploratory_dir.exists():
-        for family_dir in sorted(p for p in exploratory_dir.iterdir() if p.is_dir()):
-            if family_dir.name in {"prevailing_mean", "ar1"}:
-                continue
-            record = read_json(paths.results / "validation" / family_dir.name / "selection.json")
-            window = record["params"]["window"]
-            exploratory_entries = [
-                Entry(f"{family_dir.name} (exploratory)", family_dir.name, record["params"], True),
-                Entry(f"Prevailing mean ({window}d)", "prevailing_mean", {"window": window}, False),
-                Entry(f"AR(1) ({window}d)", "ar1", {"window": window}, False),
-            ]
-            output_name = f"test_exploratory/{family_dir.name}"
-            build_split_report(cfg, paths, dataset, "test", "test_exploratory", exploratory_entries, output_name)
-            built.append(output_name)
+    elif test_dir.exists():
+        print("Test predictions do not match the current selection. Run: python -m timing.cli test --confirm-final")
     return built

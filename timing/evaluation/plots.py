@@ -73,7 +73,18 @@ def _save(fig: plt.Figure, path: Path) -> None:
     plt.close(fig)
 
 
-def _legend_above(ax: plt.Axes, ncol: int) -> None:
+MAX_LEGEND_COLUMNS = 4
+
+
+def _title_with_legend(ax: plt.Axes, title: str, n_entries: int) -> None:
+    """Title, then a legend between title and axes that wraps after MAX_LEGEND_COLUMNS entries.
+
+    A single-row legend wider than the figure makes constrained layout shrink the axes
+    to fit it, which squeezes the plot to the left, so the legend wraps instead.
+    """
+    ncol = min(n_entries, MAX_LEGEND_COLUMNS)
+    rows = -(-n_entries // ncol)
+    ax.set_title(title, pad=14 + 16 * rows)
     ax.legend(loc="lower left", bbox_to_anchor=(0, 1.0), ncol=ncol, borderaxespad=0.2, handlelength=1.6)
 
 
@@ -115,8 +126,7 @@ def plot_cumulative_returns(curves: list[dict], title: str, path: Path) -> None:
     ax.yaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(lambda v, _: f"{v:g}x"))
     ax.yaxis.set_minor_locator(matplotlib.ticker.NullLocator())
     ax.set_ylabel("Growth of $1 (log scale)")
-    ax.set_title(title, pad=30)
-    _legend_above(ax, ncol=len(curves))
+    _title_with_legend(ax, title, len(curves))
     fig.canvas.draw()
     _label_line_ends(ax, ends)
     ax.margins(x=0.08)
@@ -138,8 +148,7 @@ def plot_cumulative_r2(curves: list[dict], title: str, path: Path) -> None:
     padding = max((high - low) * 0.1, 0.01)
     ax.set_ylim(low - padding, high + padding)
     ax.set_ylabel("Cumulative out-of-sample R² (%)\ny-axis scaled from year 2")
-    ax.set_title(title, pad=30)
-    _legend_above(ax, ncol=len(curves))
+    _title_with_legend(ax, title, len(curves))
     fig.canvas.draw()
     _label_line_ends(ax, ends)
     ax.margins(x=0.08)
@@ -170,8 +179,7 @@ def plot_subperiods(table: pd.DataFrame, colors: dict[str, str], title: str, pat
             )
         ax.set_ylabel(ylabel)
     axes[1].set_xticks(x, periods)
-    axes[0].set_title(title, pad=30)
-    _legend_above(axes[0], ncol=len(labels))
+    _title_with_legend(axes[0], title, len(labels))
     _save(fig, path)
 
 
@@ -194,8 +202,7 @@ def plot_cost_sensitivity(table: pd.DataFrame, colors: dict[str, str], title: st
         ends.append((f"{rows['sharpe'].iloc[-1]:.2f}", rows["cost_bps"].iloc[-1], float(rows["sharpe"].iloc[-1])))
     ax.set_xlabel("One-way cost (bps of traded weight)")
     ax.set_ylabel("Net Sharpe ratio")
-    ax.set_title(title, pad=30)
-    _legend_above(ax, ncol=table["label"].nunique())
+    _title_with_legend(ax, title, table["label"].nunique())
     fig.canvas.draw()
     _label_line_ends(ax, ends)
     ax.margins(x=0.08)

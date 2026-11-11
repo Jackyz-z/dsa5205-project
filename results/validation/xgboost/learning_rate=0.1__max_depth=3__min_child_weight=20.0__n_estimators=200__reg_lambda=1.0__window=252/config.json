@@ -1,0 +1,14 @@
+{
+  "family": "xgboost",
+  "feature_set": "core",
+  "params": {
+    "learning_rate": 0.1,
+    "max_depth": 3,
+    "min_child_weight": 20.0,
+    "n_estimators": 200,
+    "reg_lambda": 1.0,
+    "window": 252
+  },
+  "preprocess": "none",
+  "seed": 42
+}

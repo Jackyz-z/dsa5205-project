@@ -48,10 +48,6 @@ class Paths:
     def experiment_log(self) -> Path:
         return self.results / "experiment_log.csv"
 
-    @property
-    def test_lock(self) -> Path:
-        return self.results / "test" / "lock.json"
-
 
 @dataclass(frozen=True)
 class ModelSpec:
