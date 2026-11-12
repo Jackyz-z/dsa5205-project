@@ -7,7 +7,6 @@ data known at today's close. A fixed rule turns the forecast into a SPY weight b
 The data, model, strategy, and evaluation layers are independent, so new models can be added
 without changing the pipeline. The candidate models are Ridge, LASSO, Random Forest and XGBoost.
 
-For XGBoost's design and leakage checks, see [the XGBoost notes](docs/xgboost.md) (in Chinese).
 
 ## Setup
 
